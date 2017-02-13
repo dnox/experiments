@@ -8,19 +8,23 @@ class PolynomeX(object):
     #     return new_instance
     
     def __init__(self, pol=None):
-        self.polynome = pol or tuple((('a%s' % i, i) for i in xrange(31, -1, -1)))
+        self.polynome = pol or tuple(('a%s' % i for i in xrange(31, -1, -1)))
 
     def __repr__(self):
         # return str(self._counter)
         return '{}'.format(self.polynome)
 
     def __add__(self, value):
-        return PolynomeX(tuple((('({} + {})'.format(i[0][0], i[1]), i[0][1]) if int(i[1]) else (i[0][0], i[0][1]) for i in izip(self.polynome, bin(value)[2:].rjust(32, '0')))))
+        return PolynomeX(tuple((('({} + {})'.format(i[0], i[1]) if int(i[1]) else (i[0]) for i in izip(self.polynome, bin(value)[2:].rjust(32, '0')))))
 
     __radd__ = __add__
 
     def __lshift__(self, value):
         pass
 
+    def __rshift__(self, value):
+        return 
+    
     def __and__(self, value):
         return PolynomeX(tuple((((i[0][0] if int(i[1]) else '0', i[0][1]) for i in izip(self.polynome, bin(value)[2:].rjust(32, '0'))))))
+
