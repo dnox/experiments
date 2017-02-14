@@ -2,8 +2,41 @@ from itertools import izip
 import copy
 
 
+class A(object):
+    def __init__(self, value):
+        self.summands = set((value,),)
+
+    def __xor__(self, value):
+        new_a = copy.deepcopy(self)
+
+        if isinstance(value, int) and value == 1:
+            new_a.summands.add(1)
+        elif isinstance(value, A):
+            for i in value.summands:
+                if i in self.summands:
+                    new_a.summands.remove(i)
+                else:
+                    new_a.summands.add(i)
+        return new_a
+
+    def __and__(self, value):
+        new_a = copy.deepcopy(self)
+        if isinstance(value, int) and value == 0:
+            new_a.summands = set(tuple(),)
+        elif isinstance(value, int) and value == 1:
+            pass
+        else isinstance(value, A):
+            for j in self.summands: 
+                for i in value.summands:
+                    # if i in self.summands:
+                        # new_a.summands.remove(i)
+                    # else:
+                    #     new_a.summands.add(i)
+        return new_a
+    def __repr__(self):
+        return ' ^ '.join([''.join(i for i in j) for j in  self.summands]) or '0'
+
 class PolynomeX(object):
-    _counter = 0
     # def __new__(cls, *args, **kwargs):
     #     new_instance = object.__new__(cls, *args, **kwargs)
     #     cls._counter += 1
