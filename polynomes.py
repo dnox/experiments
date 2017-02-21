@@ -36,6 +36,23 @@ class Polynome(object):
             result.pop()
         return Polynome(result)
 
+    def __add__(self, value):
+        if isinstance(value, int):
+            value = map(int, bin(value)[2:][::-1])
+        else:
+            value = value.value
+
+        r = list(self.value)
+        for position, item in enumerate(value):
+            new_r = r[:position]
+            additional = item
+            for j in r[position:]:
+                new_r.append(j ^ additional) # 1.a3 ^ 1
+                additional = j & additional # 1. add = a3
+            new_r.append(additional)
+            r = new_r
+        return Polynome(r)
+# (a1, a2, a3) + 1 = (a0 ^ a1a2a3, a1 ^ a2a3, a2 ^ a3, a3 ^ 1)
 
 class M(object):
     def __init__(self, value):
@@ -106,41 +123,20 @@ assert M(['a1']) & 0 == 0
 assert M(['a1', 'a2']) & M(['a1']) == M(['a1', 'a2'])
 
 p1 = Polynome([S([M(['a0'])]), S([M(['a1'])]), S([M(['a2'])]), S([M(['a3'])]), S([M(['a4'])])])
-# print p1
+print p1
 # print p1 & 7
 # print p1 & 3
-print p1 & 0 ^ p1
+# print p1 & 0 ^ p1
 
-print p1 ^ 7
-print p1 ^ 127
+# print p1 ^ 7
+# print p1 ^ 127
+print p1 + 1
+print p1 + 3
+print (p1 + p1)
 
-# assert M(['a1']) ^ M(['a2']) == S(['a1', 'a2'])
-# # class PolynomeX(object):
-# #     # def __new__(cls, *args, **kwargs):
-# #     #     new_instance = object.__new__(cls, *args, **kwargs)
-# #     #     cls._counter += 1
-# #     #     return new_instance
-# #     # a2,a1,a0 + 1 = a2a1a0, a2 ^ a1a0, a1 ^ a0, a0 ^ 1
-# #     def __init__(self, pol=None):
-# #         self.polynome = pol or [[[i]] for i in xrange(31, -1, -1)]
+# a4, a3, a2, a1, a0
+# a4 ^ a0a1a2a3, a3 ^ a0a1a2, a2 ^ a0a1, a1 ^ a0, a0 ^ 1
+# a4 ^ a0a1a2a3 ^ a1a2a3 ^ a0a2a3, a3 ^ a0a1a2 ^ a1a2 ^ a0a2, a2 ^ a0a1 ^ a1 ^ a0, a1 ^ a0 ^ 1, a0 ^ 1
 
-# #     def __repr__(self):
-# #         # return str(self._counter)
-# #         return '{}'.format(self.polynome)
-
-# #     def __add__(self, value):
-# #         if isinstance(value, int):
-# #             bint = bin(value)[2:]
-# #             return PolynomeX(tuple((('({} + {})'.format(i[0], i[1]) if int(i[1]) else (i[0])) for i in izip(self.polynome, bin(value)[2:].rjust(32, '0')))))
-
-# #     __radd__ = __add__
-
-# #     def __lshift__(self, value):
-# #         pass
-
-# #     def __rshift__(self, value):
-# #         return 
-    
-# #     def __and__(self, value):
-# #         return PolynomeX(tuple((i[0] if int(i[1]) else '0' for i in izip(self.polynome, bin(value)[2:].rjust(32, '0')))))
-
+# 22 --- 10110 --- a0 = 1, a1 = 1, a2 = 1, a3 = 1, a4 = 1
+# 0, 1, 0, 0, 0, 1, 0
